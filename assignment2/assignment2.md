@@ -112,3 +112,72 @@ fast_load()
   }
 }
 ```
+
+### Problem 3.1
+**Solution:**
+
+First I generated the default
+
+```
+es.indices.delete("movies")
+es.indices.create(index="movies",
+                                body={
+                                    "mappings": {
+                                        "movie": {
+                                            "properties": {
+                                                "abstract": {
+                                                    "type": "text",
+                                                    "fields": {
+                                                        "keyword": {
+                                                            "type": "keyword",
+                                                            "ignore_above": 256
+                                                        }
+                                                    }
+                                                },
+                                                "genres": {
+                                                    "type": "text",
+                                                    "fields": {
+                                                        "keyword": {
+                                                            "type": "keyword",
+                                                            "ignore_above": 256
+                                                        }
+                                                    }
+                                                },
+                                                "starring": {
+                                                    "type": "text",
+                                                    "fields": {
+                                                        "keyword": {
+                                                            "type": "keyword",
+                                                            "ignore_above": 256
+                                                        }
+                                                    },
+                                                    "analyzer": "not_analyzed"
+                                                },
+                                                "subject": {
+                                                    "type": "text",
+                                                    "fields": {
+                                                        "keyword": {
+                                                            "type": "keyword",
+                                                            "ignore_above": 256
+                                                        }
+                                                    },
+                                                    "analyzer": "not_analyzed"
+                                                },
+                                                "title": {
+                                                    "type": "text",
+                                                    "fields": {
+                                                        "keyword": {
+                                                            "type": "keyword",
+                                                            "ignore_above": 256
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                   }
+                               }
+                 )
+```
+
+### Problem 3.3
+
