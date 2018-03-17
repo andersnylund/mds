@@ -170,3 +170,50 @@ es.indices.create(index="movies",
 
 ### Problem 3.3
 
+**Full mapping:**
+
+```
+"mappings": {
+    "movie": {
+        "properties": {
+            "abstract": {
+                "type": "text",
+                "analyzer": "english",
+                "term_vector": "yes"
+            },
+            "genres": {
+                "type": "text",
+                "fields": {
+                    "keyword": {
+                        "type": "keyword",
+                        "ignore_above": 256
+                    }
+                }
+            },
+            "starring": {
+                "type": "string",
+                "index": "not_analyzed"
+            },
+            "subject": {
+                "type": "string",
+                "index": "not_analyzed"
+            },
+            "title": {
+                "type": "text",
+                "fields": {
+                    "keyword": {
+                        "type": "keyword",
+                        "ignore_above": 256
+                    }
+                }
+            }
+        }
+    }
+},
+"settings": {
+    "index": {
+        "number_of_shards": "1"
+    }
+}
+```
+
