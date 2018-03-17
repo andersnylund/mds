@@ -113,13 +113,13 @@ fast_load()
 }
 ```
 
-### Problem 3.1
+### Problem 3.2
 **Solution:**
 
-First I generated the default
+I copied the default mapping created by Elasticearch in problem 3.1 and modified the properties of that to match the requirements. By modifying the "subject" and "starring" properties' indices to "not_analyzed" we get the desired behavior
 
+Python code to create the desired mapping:
 ```
-es.indices.delete("movies")
 es.indices.create(index="movies",
                                 body={
                                     "mappings": {
@@ -144,24 +144,12 @@ es.indices.create(index="movies",
                                                     }
                                                 },
                                                 "starring": {
-                                                    "type": "text",
-                                                    "fields": {
-                                                        "keyword": {
-                                                            "type": "keyword",
-                                                            "ignore_above": 256
-                                                        }
-                                                    },
-                                                    "analyzer": "not_analyzed"
+                                                    "type": "string",
+                                                    "index": "not_analyzed"
                                                 },
                                                 "subject": {
-                                                    "type": "text",
-                                                    "fields": {
-                                                        "keyword": {
-                                                            "type": "keyword",
-                                                            "ignore_above": 256
-                                                        }
-                                                    },
-                                                    "analyzer": "not_analyzed"
+                                                    "type": "string",
+                                                    "index": "not_analyzed"
                                                 },
                                                 "title": {
                                                     "type": "text",
@@ -177,6 +165,7 @@ es.indices.create(index="movies",
                                    }
                                }
                  )
+
 ```
 
 ### Problem 3.3

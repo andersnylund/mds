@@ -20,6 +20,53 @@ df_dbpedia_merged = df_dbpedia[["movie_id","dbpedia_content"]].merge(df_movie, o
 if es.indices.exists("movies"):
     es.indices.delete("movies")
 
+es.indices.create(index="movies",
+                                body={
+                                    "mappings": {
+                                        "movie": {
+                                            "properties": {
+                                                "abstract": {
+                                                    "type": "text",
+                                                    "fields": {
+                                                        "keyword": {
+                                                            "type": "keyword",
+                                                            "ignore_above": 256
+                                                        }
+                                                    }
+                                                },
+                                                "genres": {
+                                                    "type": "text",
+                                                    "fields": {
+                                                        "keyword": {
+                                                            "type": "keyword",
+                                                            "ignore_above": 256
+                                                        }
+                                                    }
+                                                },
+                                                "starring": {
+                                                    "type": "string",
+                                                    "index": "not_analyzed"
+                                                },
+                                                "subject": {
+                                                    "type": "string",
+                                                    "index": "not_analyzed"
+                                                },
+                                                "title": {
+                                                    "type": "text",
+                                                    "fields": {
+                                                        "keyword": {
+                                                            "type": "keyword",
+                                                            "ignore_above": 256
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                   }
+                               }
+                 )
+
+
 def fast_load(bulk_size = 10000):
     tasks = []
     for index, movie in df_dbpedia_merged.iterrows():
@@ -49,64 +96,3 @@ def fast_load(bulk_size = 10000):
     helpers.bulk(es, tasks)
 
 fast_load()
-
-
-es.indices.delete("movies")
-
-es.indices.create(index="movies",
-                                body={
-                                    "mappings": {
-                                        "movie": {
-                                            "properties": {
-                                                "abstract": {
-                                                    "type": "text",
-                                                    "fields": {
-                                                        "keyword": {
-                                                            "type": "keyword",
-                                                            "ignore_above": 256
-                                                        }
-                                                    }
-                                                },
-                                                "genres": {
-                                                    "type": "text",
-                                                    "fields": {
-                                                        "keyword": {
-                                                            "type": "keyword",
-                                                            "ignore_above": 256
-                                                        }
-                                                    }
-                                                },
-                                                "starring": {
-                                                    "type": "text",
-                                                    "fields": {
-                                                        "keyword": {
-                                                            "type": "keyword",
-                                                            "ignore_above": 256
-                                                        }
-                                                    },
-                                                    "analyzer": "not_analyzed"
-                                                },
-                                                "subject": {
-                                                    "type": "text",
-                                                    "fields": {
-                                                        "keyword": {
-                                                            "type": "keyword",
-                                                            "ignore_above": 256
-                                                        }
-                                                    },
-                                                    "analyzer": "not_analyzed"
-                                                },
-                                                "title": {
-                                                    "type": "text",
-                                                    "fields": {
-                                                        "keyword": {
-                                                            "type": "keyword",
-                                                            "ignore_above": 256
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                   }
-                               }
-                 )
