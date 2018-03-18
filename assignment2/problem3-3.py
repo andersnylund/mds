@@ -28,7 +28,7 @@ es.indices.create(index="movies",
                                             "properties": {
                                                 "abstract": {
                                                     "type": "text",
-                                                    "analyzer": "whitespace",
+                                                    "analyzer": "english",
                                                     "term_vector": "yes"
                                                 },
                                                 "genres": {

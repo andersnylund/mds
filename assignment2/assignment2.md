@@ -276,5 +276,30 @@ Solution to Problem 3.3 1) used the _english_-analyzer that understands the Engl
 
 Therefore a weight schema produced with the _english_-analyzer might produce a "better" schema, as for example, compared by using the _whitespace_-analyzer. The _english_-analyzer is able to take into account different forms of the same word and therefore produce a more accurate weight schema.
 
-### Problem 3.4
+### Problem 3.4 1)
 
+```
+def more_like_this(document_id):
+    body = { 
+        "query": {
+            "more_like_this": {
+                "fields" : ["starring", "subjects", "abstract"],
+                "like" : [
+                    {
+                        "_id": document_id
+                    }
+                ],
+                "min_term_freq" : 1,
+                "max_query_terms" : 10
+            }
+        }
+    }
+
+    return es.search(index="movies", doc_type="movie", body=body)
+```
+
+### Problem 3.4 2)
+
+The limitation of _max_query_terms_, as the name explains, limits the terms used in the query, and therefore by lowering the amount makes the query concentrate on smaller amount of terms. Therefore for example, with a low _max_query_terms_ value, the query might give a high value for a movie that has the same most frequent term on the abstract field.
+
+Setting the the min_term_freq forces the query to only include terms that have high frequency, and therefore the result might be more accurate when it considers only terms that have a high frequency 
