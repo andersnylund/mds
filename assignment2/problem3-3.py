@@ -99,22 +99,28 @@ df_dbpedia_merged = df_dbpedia[["movie_id","dbpedia_content"]].merge(df_movie, o
 
 # fast_load()
 
-def tf_idf_weight(freq, num_of_docs, n):
-    return (1 + math.log(freq)) * math.log10(n/num_of_docs) 
+def tf_idf_weight(freq_of_term_in_docs, num_of_docs_contain_term, documents):
+    return (1 + math.log(freq_of_term_in_docs)) * math.log10(documents/num_of_docs_contain_term) 
 
 
 def tf_idf(index, doc_type, doc_id, field):
-    params = {
-        "fields": field
-    }
-    term_vectors = es.termvectors(index="movies", doc_type="movie", id=doc_id, params=params)["term_vectors"][field]["terms"]
+    term_vectors = es.termvectors(index="movies", doc_type="movie", id=doc_id, params={"fields": field})["term_vectors"][field]["terms"]
 
-    n =  es.count(index="movies") # fix this to wait for all documents to be loaded
+    number_of_documents =  es.count(index="movies") # get count of all documents fix this to wait for all documents to be loaded
+
+    all_ids = list(map(lambda x: x["_id"], es.search(index="movies", doc_type="movie", body={"size": 4000, "query": {"match_all": {}}, "stored_fields": ["_id"]})["hits"]["hits"]))
+
+    term_frequencies = es.mtermvectors(index="movies", doc_type="movie", params={"ids": all_ids, "fields": field})
 
     for term in term_vectors:
-        freq = term_vectors[term]["term_freq"]
-        a = 1
-
+        number_of_documents_containing_term = es.count(index="movies", body={
+            "query": {
+                "term": {
+                    field: term
+                }
+            }
+        })
+        
 
     return []
 
