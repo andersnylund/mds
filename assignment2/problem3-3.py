@@ -99,29 +99,28 @@ df_dbpedia_merged = df_dbpedia[["movie_id","dbpedia_content"]].merge(df_movie, o
 
 # fast_load()
 
-def tf_idf_weight(freq_of_term_in_docs, num_of_docs_contain_term, documents):
-    return (1 + math.log(freq_of_term_in_docs)) * math.log10(documents/num_of_docs_contain_term) 
+def tf_idf_weight(freq_of_term_in_docs, num_of_documents, num_of_docs_contain_term):
+    return (1 + math.log(freq_of_term_in_docs)) * math.log10(num_of_documents/num_of_docs_contain_term) 
 
 
 def tf_idf(index, doc_type, doc_id, field):
-    term_vectors = es.termvectors(index="movies", doc_type="movie", id=doc_id, params={"fields": field})["term_vectors"][field]["terms"]
+    term_idf_list = []
+    
+    params = {
+        "fields": field,
+        "term_statistics": True,
+        "field_statistics": True
+    }
+    
+    document_term_vectors = es.termvectors(index="movies", doc_type="movie", id=doc_id, params=params)
 
-    number_of_documents =  es.count(index="movies") # get count of all documents fix this to wait for all documents to be loaded
+    number_of_all_documents = document_term_vectors["term_vectors"][field]["field_statistics"]["doc_count"]
 
-    all_ids = list(map(lambda x: x["_id"], es.search(index="movies", doc_type="movie", body={"size": 4000, "query": {"match_all": {}}, "stored_fields": ["_id"]})["hits"]["hits"]))
-
-    term_frequencies = es.mtermvectors(index="movies", doc_type="movie", params={"ids": all_ids, "fields": field})
-
-    for term in term_vectors:
-        number_of_documents_containing_term = es.count(index="movies", body={
-            "query": {
-                "term": {
-                    field: term
-                }
-            }
-        })
+    for term, value in document_term_vectors["term_vectors"][field]["terms"].items():
+        weight = tf_idf_weight(value["ttf"], number_of_all_documents, value["doc_freq"])
+        term_idf_list.append((term, weight))
         
+    term_idf_list.sort(key=lambda tup: tup[1], reverse=True)
+    return term_idf_list
 
-    return []
-
-print(tf_idf("movies", "movie", 2, "abstract"))
+print(tf_idf("movies", "movie", 2, "abstract")[:20])

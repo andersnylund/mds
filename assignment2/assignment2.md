@@ -217,3 +217,55 @@ es.indices.create(index="movies",
 }
 ```
 
+**Python tf_idf function**
+```
+def tf_idf_weight(freq_of_term_in_docs, num_of_documents, num_of_docs_contain_term):
+    return (1 + math.log(freq_of_term_in_docs)) * math.log10(num_of_documents/num_of_docs_contain_term) 
+
+
+def tf_idf(index, doc_type, doc_id, field):
+    term_idf_list = []
+    
+    params = {
+        "fields": field,
+        "term_statistics": True,
+        "field_statistics": True
+    }
+    
+    document_term_vectors = es.termvectors(index="movies", doc_type="movie", id=doc_id, params=params)
+
+    number_of_all_documents = document_term_vectors["term_vectors"][field]["field_statistics"]["doc_count"]
+
+    for term, value in document_term_vectors["term_vectors"][field]["terms"].items():
+        weight = tf_idf_weight(value["ttf"], number_of_all_documents, value["doc_freq"])
+        term_idf_list.append((term, weight))
+        
+    term_idf_list.sort(key=lambda tup: tup[1], reverse=True)
+    return term_idf_list
+```
+
+The result for  tf_idf(“movies”, “movie”, 2, “abstract”):
+```
+[
+    ('game', 9.477052402943105), 
+    ('hunt', 9.379976906997754), 
+    ('comput', 9.307755643571701), 
+    ('van', 9.265620875802805), 
+    ('johnson', 9.196046604654528), 
+    ('price', 9.176363555382164), 
+    ('robin', 9.166564719135216), 
+    ('judi', 9.161818288976658), 
+    ('pierc', 9.158876154488267), 
+    ('light', 9.126801831003398), 
+    ('magic', 9.10003801368827), 
+    ('yet', 9.087459659000638), 
+    ('graphic', 9.083114163180133), 
+    ('1969', 9.08020112758106), 
+    ('board', 9.08020112758106), 
+    ('track', 9.071322620957192), 
+    ('industri', 9.07122095778509), 
+    ('columbia', 9.056856873764595), 
+    ('caus', 9.032303072682897), 
+    ('15', 9.032212333556568)
+]
+```
