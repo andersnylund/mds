@@ -168,7 +168,7 @@ es.indices.create(index="movies",
 
 ```
 
-### Problem 3.3
+### Problem 3.3 1)
 
 **Full mapping:**
 
@@ -269,3 +269,12 @@ The result for  tf_idf(“movies”, “movie”, 2, “abstract”):
     ('15', 9.032212333556568)
 ]
 ```
+
+### Problem 3.3 2)
+
+Solution to Problem 3.3 1) used the _english_-analyzer that understands the English grammar. This way it removes stopwords as "the", "a" etc. Additionally it will stem the words and try to transform them to their root form. 
+
+Therefore a weight schema produced with the _english_-analyzer might produce a "better" schema, as for example, compared by using the _whitespace_-analyzer. The _english_-analyzer is able to take into account different forms of the same word and therefore produce a more accurate weight schema.
+
+### Problem 3.4
+
