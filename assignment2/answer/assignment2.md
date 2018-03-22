@@ -3,7 +3,7 @@
 
 ## Part A: Pen and Paper
 
-### Problem 1.1
+### Problem 1
 
 #### Question 1
 
@@ -22,16 +22,9 @@ By monetizing the importance of the document, the publishers of the documents ca
 Here the importance boost of paying can for example be made obsolete 4 weeks, and after that the importance goes down to 0 again. 
 
 #### Question 2
-As web-pages are markup they often follow the same conventions everywhere. In fact, web-pages are often on purpose implemented with "good practices" to enable search-engine indexing as good as possible. Therefore common tags like `<h1>`, `<body>` and `<p>` are used in a way that makes sense. 
+As web-pages are markup they often follow the same conventions everywhere. In fact, web-pages are often on purpose implemented with "good practices" to enable search-engine indexing as good as possible. Therefore common tags like `<h1>`, `<body>` and `<p>` are used in a way that makes sense. We could store text and individual words in the index based on in which kind of tag they appear. By this convention a word that appears in a `<h1>` tag has more weight than the same word appearing in a `<p>`. These are the basic things to store in the index. 
 
-However, these tags are quite standard and new rules are constantly emerging.
-
-There is a lot of other things that can be considered also. ShoutMeLoud (2017) lists 11 tips of how to increase the visibility of your webpage showing up. These are not taking de-facto standard things like the HTML tags into consideration.
-
-For example google has not officially listed their indexing rules, but after time the basic rules has been formed and 
-
-### Question 3
-
+However, these tags are quite standard and new rules are constantly emerging. There is a lot of other things that can be considered also. ShoutMeLoud (2017) lists 11 tips of how to increase the visibility of your webpage showing up. These are not taking de-facto standard things like the HTML tags into consideration. For example google has not officially listed their indexing rules, but after time the basic rules has been formed and it has become a standard in the industry to follow the basic rules and suggestions.
 
 ## Part B: Programming
 
