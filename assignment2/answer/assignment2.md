@@ -1,6 +1,38 @@
 # Modern Database Systems CS-E4610 - Assignment 2
 ## **Anders Nylund 659888**
 
+## Part A: Pen and Paper
+
+### Problem 1.1
+
+#### Question 1
+
+**Solution 1:**
+To determine the importance of a document (web-page), we need to have all other documents on hand. 
+
+As the search engine will produce search result, we could collect statistic on what results gets used the most. This means that when the engine produces results when searching for something, we could collect "clicks" on how many times the user selects a particular result. This way we could rank each document by how many times it has been clicked, no matter what the query was.
+
+When we know how many times a document has been selected as the "best result" by the user we increase a counter. So then each document will be ranked by the number of "clicks" and a number between 0 and 1 will be given to it, where the most clicked document has the value 1, and the least clicked value 0. 
+
+The problem with this is that old documents often dominate the "leaderboard" of importance. Therefore there is a need to introduce some kind of different time intervals, as today, this week, this month and all time.
+
+**Solution 2:**
+By monetizing the importance of the document, the publishers of the documents can pay to the search engine provider. By giving for example the possibility to have 4 different classes of importance where free is class 0, and 1-3 are gradually more expensive.
+
+Here the importance boost of paying can for example be made obsolete 4 weeks, and after that the importance goes down to 0 again. 
+
+#### Question 2
+As web-pages are markup they often follow the same conventions everywhere. In fact, web-pages are often on purpose implemented with "good practices" to enable search-engine indexing as good as possible. Therefore common tags like `<h1>`, `<body>` and `<p>` are used in a way that makes sense. 
+
+However, these tags are quite standard and new rules are constantly emerging.
+
+There is a lot of other things that can be considered also. ShoutMeLoud (2017) lists 11 tips of how to increase the visibility of your webpage showing up. These are not taking de-facto standard things like the HTML tags into consideration.
+
+For example google has not officially listed their indexing rules, but after time the basic rules has been formed and 
+
+### Question 3
+
+
 ## Part B: Programming
 
 ### Problem 3.1
@@ -61,55 +93,56 @@ fast_load()
 
 **Mapping created by ElasticSearch:**
 ```
-{
-  "movies": {
-    "aliases": {},
-    "mappings": {
-      "movie": {
+"mappings": {
+    "movie": {
         "properties": {
-          "abstract": {
-            "type": "text",
-            "fields": {
-              "keyword": {
-                "type": "keyword",
-                "ignore_above": 256
-              }
+            "abstract": {
+                "type": "text",
+                "fields": {
+                    "keyword": {
+                        "type": "keyword",
+                        "ignore_above": 256
+                    }
+                }
+            },
+            "genres": {
+                "type": "text",
+                "fields": {
+                    "keyword": {
+                        "type": "keyword",
+                        "ignore_above": 256
+                    }
+                }
+            },
+            "starring": {
+                "type": "text",
+                "fields": {
+                    "keyword": {
+                        "type": "keyword",
+                        "ignore_above": 256
+                    }
+                }
+            },
+            "subject": {
+                "type": "text",
+                "fields": {
+                    "keyword": {
+                        "type": "keyword",
+                        "ignore_above": 256
+                    }
+                }
+            },
+            "title": {
+                "type": "text",
+                "fields": {
+                    "keyword": {
+                        "type": "keyword",
+                        "ignore_above": 256
+                    }
+                }
             }
-          },
-          "genres": {
-            "type": "text",
-            "fields": {
-              "keyword": {
-                "type": "keyword",
-                "ignore_above": 256
-              }
-            }
-          },
-          "title": {
-            "type": "text",
-            "fields": {
-              "keyword": {
-                "type": "keyword",
-                "ignore_above": 256
-              }
-            }
-          }
         }
-      }
-    },
-    "settings": {
-      "index": {
-        "creation_date": "1520777608998",
-        "number_of_shards": "5",
-        "number_of_replicas": "1",
-        "uuid": "CS1E2JwFSdGPtA-kvRcgJQ",
-        "version": {
-          "created": "5060899"
-        },
-        "provided_name": "movies"
-      }
     }
-  }
 }
 ```
 
@@ -303,3 +336,8 @@ def more_like_this(document_id):
 The limitation of _max_query_terms_, as the name explains, limits the terms used in the query, and therefore by lowering the amount makes the query concentrate on smaller amount of terms. Therefore for example, with a low _max_query_terms_ value, the query might give a high value for a movie that has the same most frequent term on the abstract field.
 
 Setting the the min_term_freq forces the query to only include terms that have high frequency, and therefore the result might be more accurate when it considers only terms that have a high frequency 
+
+
+## References
+
+ShoutMeLoud, (2017). _11 Solid Tips to Increase Google Crawl Rate Of Your Website_. [online]. [viewed on: 19 march 2018] 
