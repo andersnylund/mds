@@ -7,7 +7,7 @@ from elasticsearch import helpers
 
 es = elasticsearch.Elasticsearch() # Defines how to connect to a Elasticsearch node
 
-data_dir = "./data/movielens"
+data_dir = "../data/movielens"
 
 df_dbpedia = pd.read_csv(os.path.join(data_dir, "dbpedia.csv"))
 df_dbpedia["dbpedia_content"] = df_dbpedia["dbpedia_content"].apply(json.loads) # Parse string to JSON
