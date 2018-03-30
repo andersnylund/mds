@@ -1,19 +1,23 @@
 import findspark
 findspark.init()
-
 import pyspark
-spark = pyspark.SparkContext(master="local[*]", appName="movie")
+import pyspark.sql.functions as func
 
-lines = spark.textFile("./data/movielens/ratings.csv")
 
-# remove header, create a tuple of each row, groupByKey and mapValues reduces by key and sums the count of each movie)
-interm = lines.map(lambda line: line.split(",")) \
-    .filter(lambda line: line[0] != "user_id") \
-    .map(lambda line: (int(line[1]), 1)) \
-    .groupByKey() \
-    .mapValues(len) \
+spark = pyspark.sql.SparkSession.builder \
+    .master("local") \
+    .appName("movies") \
+    .getOrCreate()
+
+df = spark.read.csv(path="./data/movielens/ratings.csv", header=True)
+
+max_ratings = df.groupBy("movie_id") \
+    .agg(func.count(func.lit(1)).alias("ratings")) \
+    .agg({"ratings": "max"}) \
+    .collect()[0]["max(ratings)"]
+
+twenty5th_percentile = df.groupBy("movie_id") \
+    .agg(func.count(func.lit(1)).alias("ratings")) \
+    .filter("ratings/"+str(max_ratings)+" > 0.25") \
+    .orderBy("movie_id") \
     .collect()
-interm.sort(key=lambda tup: tup[0]) # sort the list by movie_id
-
-max_ratings = max(interm, key=lambda item: item[1])[1] # get movie with most ratings
-result = list(filter(lambda movie: movie[1]/max_ratings >= 0.25, interm)) # filter list with 25th percentile
