@@ -1,0 +1,9 @@
+version: '3.1'
+
+services:
+  jupyter:
+    build:
+      context: .
+    ports:
+      - 8888:8888
+    # command: ["start-notebook.sh", "--NotebookApp.password='sha1:b9f6287f2504:e9ff0e9a65a0df2dce1261e698a3b595600bcbca'"] # sets notebook password to "qwerqwer"

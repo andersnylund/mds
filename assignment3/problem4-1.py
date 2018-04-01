@@ -3,7 +3,6 @@ findspark.init()
 import pyspark
 import pyspark.sql.functions as func
 
-
 spark = pyspark.sql.SparkSession.builder \
     .master("local") \
     .appName("movies") \
