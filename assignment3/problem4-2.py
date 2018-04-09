@@ -13,7 +13,7 @@ spark = pyspark.sql.SparkSession.builder \
     .appName("movies") \
     .getOrCreate()
 
-df = spark.read.csv(path="./data/movielens/ratings.csv", header=True).limit(100000)
+df = spark.read.csv(path="./data/movielens/ratings.csv", header=True).limit(1000)
 df = df.withColumn("rating", df["rating"].cast(IntegerType()))
 
 averages = df \
@@ -90,23 +90,25 @@ def compare(user_id):
     user_movies = mapped[user_id]['ratings']
 
     for other_user_id in mapped:
-        user = []
-        other = []
-        other_user_movies = mapped[other_user_id]['ratings']
-        for movie_id in other_user_movies:
-            if movie_id in user_movies:  # movie rated by both
-                user.append(user_movies[movie_id]['diff'])
-                other.append(other_user_movies[movie_id]['diff'])
 
-        # convert ids to int for correct comparison
-        user_id = int(user_id)
-        other_user_id = int(other_user_id)
+        if int(user_id) != int(other_user_id):
+            user = []
+            other = []
+            other_user_movies = mapped[other_user_id]['ratings']
+            for movie_id in other_user_movies:
+                if movie_id in user_movies:  # movie rated by both
+                    user.append(user_movies[movie_id]['diff'])
+                    other.append(other_user_movies[movie_id]['diff'])
 
-        smaller_id = user_id if user_id < other_user_id else other_user_id
-        bigger_id = user_id if user_id > other_user_id else other_user_id
+            # convert ids to int for correct comparison
+            user_id = int(user_id)
+            other_user_id = int(other_user_id)
 
-        similarity = cosine_similarity(user, other)
-        comparison.add((smaller_id, bigger_id, similarity))
+            smaller_id = user_id if user_id < other_user_id else other_user_id
+            bigger_id = user_id if user_id > other_user_id else other_user_id
+
+            similarity = cosine_similarity(user, other)
+            comparison.add((smaller_id, bigger_id, similarity))
 
     return comparison
 
@@ -127,7 +129,9 @@ result = sc.parallelize(user_ids) \
     .map(lambda user_id: compare(user_id)) \
     .aggregate(set(), combine_sets, combine_sets)
 
+
 with open("comparison.csv", "w") as the_file:
     writer = csv.writer(the_file)
+    writer.writerow(("first", "second", "similarity"))
     for tup in result:
         writer.writerow(tup)
