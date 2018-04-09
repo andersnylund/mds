@@ -1,19 +1,19 @@
 import findspark
+
 findspark.init()
 import pyspark
 from pyspark.sql.types import IntegerType
 from pyspark import SparkContext
-import json
 import numpy as np
 import csv
-
+import math
 
 spark = pyspark.sql.SparkSession.builder \
     .master("local") \
     .appName("movies") \
     .getOrCreate()
 
-df = spark.read.csv(path="./data/movielens/ratings.csv", header=True)
+df = spark.read.csv(path="./data/movielens/ratings.csv", header=True).limit(100000)
 df = df.withColumn("rating", df["rating"].cast(IntegerType()))
 
 averages = df \
@@ -23,9 +23,8 @@ averages = df \
 
 joined = averages \
     .join(df, df["user_id"] == averages["user_id"]) \
-    .select(df["user_id"], "avg(rating)", "rating", "movie_id")\
+    .select(df["user_id"], "avg(rating)", "rating", "movie_id") \
     .collect()
-
 
 sc = SparkContext.getOrCreate()
 rdd = sc.parallelize(joined)
@@ -77,6 +76,10 @@ def cosine_similarity(first_list, second_list):
     b_length = np.linalg.norm(b)
 
     similarity = dot_product / (a_length * b_length)
+
+    if math.isnan(similarity):
+        similarity = 0
+
     similarity = "{0:.10f}".format(similarity)
 
     return similarity
@@ -105,8 +108,6 @@ def compare(user_id):
         similarity = cosine_similarity(user, other)
         comparison.add((smaller_id, bigger_id, similarity))
 
-        print(user_id)
-
     return comparison
 
 
@@ -114,14 +115,19 @@ def combine_sets(set1, set2):
     set1.update(set2)
     return set1
 
+
 print("Starting mapping")
 
-result = sc.parallelize(mapped) \
+user_ids = []
+
+for key in mapped:
+    user_ids.append(key)
+
+result = sc.parallelize(user_ids) \
     .map(lambda user_id: compare(user_id)) \
     .aggregate(set(), combine_sets, combine_sets)
-
 
 with open("comparison.csv", "w") as the_file:
     writer = csv.writer(the_file)
     for tup in result:
-        writer.write(tup)
+        writer.writerow(tup)
