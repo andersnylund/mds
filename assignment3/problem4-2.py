@@ -66,6 +66,13 @@ mapped = rdd.map(lambda row: {"user_id": row["user_id"],
     .aggregate({}, seq_op, combOp)
 
 
+with open("averages.csv", "w") as the_file:
+    writer = csv.writer(the_file)
+    writer.writerow(("user", "average"))
+    for user in mapped:
+        writer.writerow((user, mapped[user]["average"]))
+
+
 def cosine_similarity(first_list, second_list):
     a = np.array(first_list)
     b = np.array(second_list)

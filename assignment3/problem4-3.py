@@ -24,22 +24,38 @@ def seq_op(acc, row):
     if row["first"] in acc:
         acc[row["first"]].append((row["second"], similarity))
     else:
-        acc[row["first"]] = [(row["first"], similarity)]
+        acc[row["first"]] = [(row["second"], similarity)]
 
     if row["second"] in acc:
         acc[row["second"]].append((row["first"], similarity))
     else:
-        acc[row["second"]] = [(row["second"], similarity)]
+        acc[row["second"]] = [(row["first"], similarity)]
 
     return acc
 
 
-result = rdd.aggregate({}, seq_op, lambda x, y: {**x, **y})
+similarities = rdd.aggregate({}, seq_op, lambda x, y: {**x, **y})
 
 
-for user in result:
-    sorted(result[user])
-    result[user] = result[user][:10]
+def map_averages(acc, row):
+    acc[row["user"]] = row["average"]
+    return acc
 
 
-print(result)
+averages = spark.read.csv(path="./averages.csv", header=True).rdd.aggregate({}, map_averages, lambda x, y: {**x, **y})
+
+
+movies = spark.read.csv(path='./data/movielens/movies.csv', header=True).collect()
+
+
+def mapping(user, nearest):
+
+    predicted_ratings = []
+    user_average = averages[user]
+
+    for movie in movies:
+        for other in nearest:
+            
+
+
+sc.parallelize(similarities).map(lambda user: mapping(user, similarities[user][:10])).collect()
