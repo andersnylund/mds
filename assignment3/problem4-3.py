@@ -55,7 +55,7 @@ def mapping(user, nearest):
 
     for movie in movies:
         for other in nearest:
-            
+
 
 
 sc.parallelize(similarities).map(lambda user: mapping(user, similarities[user][:10])).collect()
